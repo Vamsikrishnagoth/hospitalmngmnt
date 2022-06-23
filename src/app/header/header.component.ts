@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../login.service';
+import { AppServiceService } from '../app-service.service';
+import { LoginService } from '../login/login.service';
+import { User } from '../Shared/Models';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -8,11 +10,33 @@ import { LoginService } from '../login.service';
 export class HeaderComponent implements OnInit {
 
   username : String;
-  constructor(private loginService : LoginService) {
-      this.username = loginService.getUsername();
+  loggedInuser :User;
+  constructor(
+    private loginService : LoginService,
+    private appService:AppServiceService) {
+    this.loggedInuser = new User();
    }
 
-  ngOnInit() {
+  ngOnInit( ) {
+    this.subscribeSubjects();
   }
 
+  subscribeSubjects(){
+    this.appService.userLoggedIn$?.subscribe(x=>{
+      if(x){
+        this.loggedInuser.email =x?.email;
+        this.loggedInuser.username=x?.userName;
+        this.loggedInuser.usertype=x?.usertype;
+        if(this.loggedInuser.usertype=='' || this.loggedInuser.usertype==null){
+          
+        }
+      }
+    })
+  }
+
+  logout(){
+    localStorage.removeItem("user");
+    console.log("came here");
+    window.location.reload();
+  }
 }

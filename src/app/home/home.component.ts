@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../login.service';
+import { LoginService } from '../login/login.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +12,7 @@ export class HomeComponent implements OnInit {
   patientEnable : boolean = false;
 
   constructor(private loginService : LoginService) { 
-      console.log(this.loginService.getUsername());
+     // console.log(this.loginService.getUsername());
    }
 
   ngOnInit() {

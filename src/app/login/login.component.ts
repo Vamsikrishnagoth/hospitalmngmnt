@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../login.service';
+import { LoginService } from './login.service';
 import { Router } from '@angular/router';
+import { LoginModel, LoginResponse } from '../Shared/Models';
+import { AppServiceService } from '../app-service.service';
 
 @Component({
   selector: 'app-login',
@@ -13,45 +15,52 @@ export class LoginComponent implements OnInit {
 
   showSuccess: boolean = false;
   showError: boolean = false;
-  flag: boolean = false;
+  isAuthenticated: boolean = false;
+  loginData : LoginModel ={};
+  formSubmitted: boolean;
+  errorMessage: any;
 
-  validUsers = [
-    { 'username': 'aravindlakshmanan007@gmail.com', 'password': '1234' },
-    { 'username': 'ross@friends.com', 'password': '1234' },
-    { 'username': 'joey@friends.com', 'password': '1234' },
-    { 'username': 'rechal@friends.com', 'password': '1234' }
-  ];
-  constructor(private loginService: LoginService, private router: Router) { }
+  constructor(private loginService: LoginService, private router: Router, private appService:AppServiceService) { }
 
   ngOnInit() {
+    this.checkIsLoggedin();
   }
-
-
+  checkIsLoggedin(){
+    let loggedInuser = JSON.parse(localStorage.getItem("user"));
+    if(loggedInuser){
+      console.log("loggeduser",loggedInuser);
+      this.router.navigate([`${loggedInuser.userType}`]);
+    }
+  }
   authenticate() {
-    for (var i in this.validUsers) { // loop on users array
-      if (this.user.username == this.validUsers[i].username && this.user.password == this.validUsers[i].password) {
-        this.flag = true;
-        this.loginService.setUsername(this.user.username);
-        break;
+    this.formSubmitted=true;
+      if(this.loginData.email && this.loginData.password) {
+        this.loginService.loginWithCredentials(this.loginData).subscribe((x:LoginResponse)=>{
+          if(x && x.status=='200'){
+            this.showError = false;
+            this.formSubmitted=false;
+            this.showSuccess = true;
+            console.log("result",x);
+            localStorage.setItem("user",JSON.stringify(x));
+            this.appService.userLoggedIndata(x);
+            this.router.navigate([`${x.userType}`]);
+            alert("loggedin successfully");
+          }
+          else{
+            this.showError = true;
+            this.showSuccess = false;
+            console.log(this.showSuccess);
+          }
+        },err=>{
+            this.showError = true;
+            this.showSuccess = false;
+            this.errorMessage='Internal Server Error';
+            console.log(err)
+            console.log(this.showSuccess);
+        })
       }
-      else {
-        this.flag = false;
-      }
-    }
-
-    //-------- set error or success flags
-    if (this.flag) {
-      this.showError = false;
-      this.showSuccess = true;
-      console.log(this.showSuccess);
-      this.router.navigate(['home']);
-    }
-    else {
-      this.showError = true;
-      this.showSuccess = false;
-      console.log(this.showSuccess);
-    }
   }
+
   signup() {
     this.router.navigate(["signup"]);
   }

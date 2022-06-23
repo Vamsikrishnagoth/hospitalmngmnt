@@ -10,9 +10,12 @@ import { CardComponent } from './card/card.component';
 import { PatientComponent } from './patient/patient.component';
 import { DoctorComponent } from './doctor/doctor.component';
 import { HttpClientModule } from '@angular/common/http';
-import { EditComponent } from './edit/edit.component';
-import { CreateComponent } from './create/create.component';
 import { HighlightDirective } from './highlight.directive';
+import { AdminComponent } from './admin/admin.component';
+import { ReceptionistComponent } from './receptionist/receptionist.component';
+import { PathologistComponent } from './pathologist/pathologist.component';
+import { RadiologistComponent } from './radiologist/radiologist.component';
+import { PracticeComponent } from './practice/practice.component';
 
 
 @NgModule({
@@ -24,9 +27,12 @@ import { HighlightDirective } from './highlight.directive';
     CardComponent,
     PatientComponent,
     DoctorComponent,
-    EditComponent,
-    CreateComponent,
-    HighlightDirective
+    HighlightDirective,
+    AdminComponent,
+    ReceptionistComponent,
+    PathologistComponent,
+    RadiologistComponent,
+    PracticeComponent
   ],
   imports: [
     BrowserModule,

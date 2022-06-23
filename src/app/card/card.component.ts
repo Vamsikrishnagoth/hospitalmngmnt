@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PatientModes } from '../Shared/Enums';
 import { UserService } from '../user.service';
 
 @Component({
@@ -13,7 +14,11 @@ export class CardComponent implements OnInit {
   @Output() roleId: EventEmitter<any> = new EventEmitter();
   showError: boolean = false;
   showSuccess: boolean = false;
-  constructor(private router: Router, private userService: UserService) { }
+  public modes = { addMode:false, editMode:false, deleteMode:false};
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private activatedRoute : ActivatedRoute) { }
   ngOnInit() {
   }
 
@@ -21,6 +26,30 @@ export class CardComponent implements OnInit {
     this.router.navigate(["edit", userId, roleId]);
   }
 
+  getActiveParams(){
+    this.activatedRoute.data.subscribe(x=>{
+      if(x){
+          this.setModes(x);
+      }
+    })
+ //   this.getRequestIdFromUrl();
+  }
+  setModes(x?:any){
+    switch(x.mode){
+      case PatientModes.CREATE :this.addMode();break;
+      case PatientModes.UPDATE:this.editMode();break;
+      case PatientModes.DELETE:this.deleteMode();break;
+    }
+  }
+  addMode(){
+    this.modes.addMode=true;
+  }
+  editMode(){
+    this.modes.editMode=true;
+  }
+  deleteMode(){
+    this.modes.deleteMode=true;
+  }
   deleteUser(userId, roleId) {
     // console.log(roleId);
     if (roleId == 2) {
